@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:plantect/constants/global_variables.dart';
 import 'package:plantect/features/auth/screens/splash_screen.dart';
+import 'package:plantect/providers/user_provider.dart';
 import 'package:plantect/router.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

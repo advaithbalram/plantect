@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:plantect/features/auth/screens/home_page.dart';
 import 'package:plantect/features/auth/screens/login_page.dart';
+import 'package:plantect/services/auth_services.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -14,15 +14,35 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmpasswordController =
       TextEditingController();
+  final AuthService authService = AuthService();
 
-  // void signupUser() {
-  //   authService.signUpUser(
-  //     context: context,
-  //     email: emailController.text,
-  //     password: passwordController.text,
-  //     name: nameController.text,
-  //   );
-  // }
+  void signupUser() {
+    if (passwordController.text != confirmpasswordController.text) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Error"),
+            content: const Text("Passwords do not match."),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      authService.signUpUser(
+        context: context,
+        email: emailController.text,
+        password: passwordController.text,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,14 +167,7 @@ class _SignupPageState extends State<SignupPage> {
               child: Column(
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomePage(),
-                        ),
-                      );
-                    },
+                    onPressed: signupUser,
                     style: ButtonStyle(
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
