@@ -2,6 +2,7 @@ const express = require("express");
 const bcryptjs = require("bcryptjs");
 const User = require("../models/user");
 const authRouter = express.Router();
+const jwt = require("jsonwebtoken");
 
 // Sign Up
 authRouter.post("/api/signup", async(req, res) => {
@@ -28,7 +29,7 @@ authRouter.post("/api/signup", async(req, res) => {
     }
 });
 
-// Sign in
+// Login
 
 authRouter.post("/api/login", async(req, res) => {
     try {

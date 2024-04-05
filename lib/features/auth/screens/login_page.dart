@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:plantect/features/auth/screens/home_page.dart';
 import 'package:plantect/features/auth/screens/signup_page.dart';
+import 'package:plantect/services/auth_services.dart';
 
 class LoginPage extends StatefulWidget {
   static const String routeName = '/login-page';
@@ -13,6 +13,16 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final AuthService authService = AuthService();
+
+  void loginUser() {
+    authService.logInUser(
+      context: context,
+      email: emailController.text,
+      password: passwordController.text,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,14 +129,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomePage(),
-                        ),
-                      );
-                    },
+                    onPressed: loginUser,
                     style: ButtonStyle(
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
