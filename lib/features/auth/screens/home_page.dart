@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:plantect/features/auth/screens/result_page.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:plantect/utils/constants.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,6 +17,43 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController phosphorusController = TextEditingController();
   final TextEditingController potassiumController = TextEditingController();
   final TextEditingController phController = TextEditingController();
+
+  Future<void> sendDataToServer() async {
+    double? nValue = double.tryParse(nitrogenController.text);
+    double? pValue = double.tryParse(phosphorusController.text);
+    double? kValue = double.tryParse(potassiumController.text);
+    double? phValue = double.tryParse(phController.text);
+
+    if (nValue == null || pValue == null || kValue == null || phValue == null) {
+      print("Invalid input values");
+      return;
+    }
+
+    final response = await http.post(
+      Uri.parse('${Constants.uri}/api/values'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'crop': cropController.text,
+        'N': nValue,
+        'P': pValue,
+        'K': kValue,
+        'pH': phValue,
+      }),
+    );
+    if (response.statusCode == 200) {
+      print('Data sent successfully');
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ResultPage(),
+        ),
+      );
+    } else {
+      print('Failed to send data. Error: ${response.reasonPhrase}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +75,6 @@ class _HomePageState extends State<HomePage> {
                 controller: cropController,
                 hintText: 'CROP NAME',
               ),
-              //SizedBox(height: MediaQuery.of(context).size.height * 0.05),
               const SizedBox(height: 45),
               _buildInputField(
                 controller: nitrogenController,
@@ -58,14 +97,7 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 55),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ResultPage(),
-                    ),
-                  );
-                },
+                onPressed: sendDataToServer,
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(

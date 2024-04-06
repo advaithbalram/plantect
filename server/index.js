@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const authRouter = require("./routes/auth");
+const val = require('./routes/values');
 const cors = require('cors');
 
 const PORT = process.env.PORT || 3000;
@@ -9,7 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(authRouter);
-
+app.use(val)
 const DB = "mongodb+srv://plantect:plantect@cluster0.mfnsagy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 mongoose
