@@ -15,7 +15,7 @@ viewresult.post('/api/viewresult', (req, res) => {
         }
         try {
             const jsonData = JSON.parse(data);
-            axios.post('http://localhost:3001/', jsonData)
+            axios.post('https://plantect.pythonanywhere.com/', jsonData)
                 .then(response => {
                     console.log(response.data);
                     res.json(response.data);

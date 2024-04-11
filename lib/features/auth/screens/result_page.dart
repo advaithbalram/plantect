@@ -11,15 +11,16 @@ class ResultPage extends StatefulWidget {
 }
 
 class _ResultPageState extends State<ResultPage> {
-  late Future<Map<String, dynamic>> _resultFuture;
+  String _res = '';
+  List<dynamic> _cList = [];
 
   @override
   void initState() {
     super.initState();
-    _resultFuture = _fetchResultFromBackend();
+    _fetchResultFromBackend();
   }
 
-  Future<Map<String, dynamic>> _fetchResultFromBackend() async {
+  Future<void> _fetchResultFromBackend() async {
     final response = await http.post(
       Uri.parse('${Constants.uri}/api/viewresult'),
       headers: <String, String>{
@@ -28,7 +29,11 @@ class _ResultPageState extends State<ResultPage> {
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final result = jsonDecode(response.body);
+      setState(() {
+        _res = result['res'] as String;
+        _cList = result['C'] as List<dynamic>;
+      });
     } else {
       throw Exception('Failed to load result');
     }
@@ -37,89 +42,69 @@ class _ResultPageState extends State<ResultPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/result_page.png'),
-              fit: BoxFit.fill,
-            ),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/result_page.png'),
+            fit: BoxFit.fill,
           ),
-          child: Column(
-            children: [
-              SizedBox(height: MediaQuery.of(context).size.height * 0.47),
-              FutureBuilder<Map<String, dynamic>>(
-                future: _resultFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    final result = snapshot.data!;
-                    final res = result['res'] as String;
-                    final cList = result['C'] as List<dynamic>;
-                    final cListText = StringBuffer();
-                    for (int i = 0; i < cList.length; i++) {
-                      cListText.write('${i + 1}. ${cList[i]}');
-                      if (i != cList.length - 1) {
-                        cListText.write('\n');
-                      }
-                    }
-                    return Column(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFA5EFBA),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          width: MediaQuery.of(context).size.width * 0.85,
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              res,
-                              textAlign: TextAlign.left,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 60),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFA5EFBA),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          width: MediaQuery.of(context).size.width * 0.85,
-                          height: 325,
-                          child: SingleChildScrollView(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                cListText.toString(),
-                                textAlign: TextAlign.left,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-                },
+        ),
+        child: Column(
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.47),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: const Color(0xFFA5EFBA),
+                borderRadius: BorderRadius.circular(10),
               ),
-            ],
-          ),
+              width: MediaQuery.of(context).size.width * 0.85,
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  _res,
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 60),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: const Color(0xFFA5EFBA),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              width: MediaQuery.of(context).size.width * 0.85,
+              height: 325, // Set a fixed height
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _cList.asMap().entries.map((entry) {
+                      final index = entry.key + 1;
+                      final crop = entry.value;
+                      return Text(
+                        '$index. $crop',
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
