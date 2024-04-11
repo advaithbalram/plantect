@@ -74,7 +74,7 @@ class _ResultPageState extends State<ResultPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 60),
+            const SizedBox(height: 65),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
