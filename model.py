@@ -46,9 +46,10 @@ def predict():
             crop = data['crop']
             C = p[p['probabilities'] > 0.2].index.tolist()
 
-            if p.loc[crop, 'probabilities'] >= 0.2:
+            if crop in p.index and p.loc[crop, 'probabilities'] >= 0.2:
                 res = "Suitable"
-                C.remove(crop)
+                if crop in C:
+                    C.remove(crop)
             else:
                 res = "Not Suitable"
 
