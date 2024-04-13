@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:plantect/features/auth/screens/login_page.dart';
 import 'package:plantect/services/auth_services.dart';
 
 class SignupPage extends StatefulWidget {
@@ -211,24 +210,7 @@ class _SignupPageState extends State<SignupPage> {
                           fontWeight: FontWeight.w600),
                     ),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.025),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginPage(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'Login User?',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.05),
                 ],
               ),
             ),
