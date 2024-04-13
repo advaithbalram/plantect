@@ -17,6 +17,26 @@ class _SignupPageState extends State<SignupPage> {
   final AuthService authService = AuthService();
 
   void signupUser() {
+    if (passwordController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Error"),
+            content: const Text("Password cannot be empty"),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
     if (passwordController.text != confirmpasswordController.text) {
       showDialog(
         context: context,
