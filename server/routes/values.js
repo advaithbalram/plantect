@@ -5,6 +5,7 @@ const fs = require("fs");
 
 //constants
 const DB_PATH = path.resolve("db.json");
+let latestSensorData = { temperature: null, humidity: null };
 
 // Ensure the JSON file exists, create it if it doesn't
 if (!fs.existsSync(DB_PATH)){
@@ -28,6 +29,12 @@ val.get("/api/values",async (req, res) => {
     });
 });
 
+val.post("/api/sensor", async (req, res) => {
+    latestSensorData.temperature = req.body.temperature;
+    latestSensorData.humidity = req.body.humidity;
+    res.status(200).json({ message: "Sensor data received" });
+});
+
 val.post("/api/values",async (req, res) => {
     fs.readFile(DB_PATH, "UTF-8", (err, jsonString) => {
         if (err) return console.log("Error in reading from db");
@@ -42,10 +49,8 @@ val.post("/api/values",async (req, res) => {
             P: body.P,
             K: body.K,
             pH: body.pH,
-            temperature: 25,
-            humidity: 85,
-            // temperature: body.temperature,
-            // humidity: body.humidity,
+            temperature: latestSensorData.temperature,
+            humidity: latestSensorData.humidity,
         };
         valuesArr.push(obj);
         fs.writeFile(DB_PATH, JSON.stringify(valuesArr), (err) => {
