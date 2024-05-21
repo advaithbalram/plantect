@@ -7,8 +7,8 @@
 #define DHTTYPE DHT11   // Type of DHT sensor
 
 DHT dht(DHTPIN, DHTTYPE);
-const char *ssid = "Galaxy M3128FC";     // Your WiFi SSID
-const char *password = "gjki2576";       // Your WiFi password
+const char *ssid = "********";     // Replace the * with your WiFi SSID
+const char *password = "*******";       // Replace the * with your WiFi password
 const char *server_url = "https://plantect-backend.onrender.com/api/sensor"; // Your backend hosted URL and path
 
 WiFiClientSecure client;  // Use WiFiClientSecure instead of WiFiClient
@@ -24,7 +24,7 @@ void setup() {
        Serial.print(".");
    }
    Serial.println("WiFi connected");
-   client.setInsecure();  // This will allow all certificates. For production, you should use a proper certificate.
+   client.setInsecure();  // This will allow all SSL certificates.
    delay(1000);
 }
 
