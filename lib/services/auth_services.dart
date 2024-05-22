@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:plantect/features/auth/screens/home_page.dart';
 import 'package:plantect/models/user.dart';
@@ -56,7 +55,7 @@ class AuthService {
     }
   }
 
-  void logInUser({
+  Future<bool> logInUser({
     required BuildContext context,
     required String email,
     required String password,
@@ -74,6 +73,9 @@ class AuthService {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
+
+      bool isSuccess = false;
+
       httpErrorHandle(
         response: res,
         context: context,
@@ -81,6 +83,7 @@ class AuthService {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           userProvider.setUser(res.body);
           await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
+          isSuccess = true;
           navigator.pushAndRemoveUntil(
             MaterialPageRoute(
               builder: (context) => const HomePage(),
@@ -89,8 +92,11 @@ class AuthService {
           );
         },
       );
+
+      return isSuccess;
     } catch (e) {
       showSnackBar(context, e.toString());
+      return false;
     }
   }
 }

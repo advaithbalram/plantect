@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plantect/features/auth/screens/signup_page.dart';
+import 'package:plantect/features/auth/screens/splash_screen.dart';
 import 'package:plantect/services/auth_services.dart';
 
 class LoginPage extends StatefulWidget {
@@ -14,13 +15,33 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final AuthService authService = AuthService();
+  int failedAttempts = 0;
 
-  void loginUser() {
-    authService.logInUser(
+  void loginUser() async {
+    bool success = await authService.logInUser(
       context: context,
       email: emailController.text,
       password: passwordController.text,
     );
+
+    if (success) {
+      setState(() {
+        failedAttempts = 0; // Reset the counter on successful login
+      });
+    } else {
+      setState(() {
+        failedAttempts++;
+      });
+
+      if (failedAttempts >= 2) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const SplashScreen(),
+          ),
+        );
+      }
+    }
   }
 
   @override
